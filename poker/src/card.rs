@@ -1,21 +1,22 @@
+#[derive(Debug)]
 pub struct Card {
     value: u8,    //Aces run high, value 2..14, with Ace = 14
     suit: String, //Spade, Heart, Club, Diamond
 }
 
 impl Card {
-    pub fn new(v: u8, s: &str) -> Self {
-        let s = match s {
+    pub fn new(val: u8, suit: &str) -> Self {
+        let suit = match suit {
             "s" => "Spade",
             "h" => "Heart",
             "c" => "Club",
             "d" => "Diamond",
-            &_ => s,
+            &_ => suit,
         };
 
         Self {
-            value: v,
-            suit: String::from(s),
+            value: val,
+            suit: String::from(suit),
         }
     }
 

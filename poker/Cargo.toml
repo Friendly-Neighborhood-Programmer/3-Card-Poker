@@ -7,3 +7,4 @@ edition = "2021"
 
 [dependencies]
 egui = "0.21.0"
+rand = "0.8.5"
