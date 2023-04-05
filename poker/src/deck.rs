@@ -1,5 +1,5 @@
 use rand::{thread_rng, seq::SliceRandom};
-use crate::card::{Card, self};
+use crate::card::Card;
 
 #[derive(Debug)]
 pub struct Deck {
@@ -17,19 +17,17 @@ impl Deck {
 
 	// create a standard 52 card deck
     pub fn fill_standard(&mut self) {
-		let mut suit_count = 0;
-
 		for i in 0..52 {
-			let suit = match suit_count {
+			let suit = match i / 13 {
 				0 => "Spade",
 				1 => "Heart",
 				2 => "Club",
 				3 => "Diamond",
-				_ => "",
+				_ => "INVALID",
 			};
-			if i % 13 == 12 { suit_count += 1; }
-
-			self.cards.push(Card::new(i % 13 + 2, suit));
+			
+			// add cards with values 2-14 (2-Ace) with each of the 4 suits
+			self.add_card(Card::new(i % 13 + 2, suit));
 		}
     }
 
@@ -44,8 +42,23 @@ impl Deck {
 	}
 	
 	// remove and return the top card
-	pub fn add_card(&mut self, card:Card) {
+	pub fn add_card(&mut self, card: Card) -> bool {
+		if self.get_size() >= self.get_capacity() { return false; } 
+
 		self.cards.push(card);
+		return true;
+	}
+
+	// pull cards from other into calling deck
+	pub fn fill_from_deck(&mut self, other: &mut Deck) {
+		while self.cards.len() < self.capacity {
+			self.add_card(other.pop_top_card());
+		}
+	}
+
+	// pull cards from other into calling deck
+	pub fn empty_deck(&mut self) {
+		self.cards.clear();
 	}
 
 	pub fn get_capacity(&self) -> usize {
