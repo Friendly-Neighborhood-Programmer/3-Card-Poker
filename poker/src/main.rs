@@ -1,12 +1,11 @@
 use deck::Deck;
-
+use handtests::HandTests;
 mod card;
 mod deck;
+mod handtests;
 
 fn main() {
-
-    print!("Hello Poker");
-    
+    print!("Hello Poker");   
 }
 
 #[test]
@@ -40,4 +39,17 @@ fn test_deck() {
     player_hand.fill_from_deck(&mut deck);
     print!("new player hand: \n{:#?}\n", player_hand);
     print!("new deck size: {}\n", deck.get_size());
+    if(HandTests::test_for_straight(&player_hand) == true) {
+        println!("got a straight!");
+    }
+    if(HandTests::test_for_flush(&player_hand) == true) {
+        println!("got a flush!")
+    }
+    if(HandTests::test_for_3k(&player_hand) == true) {
+        println!("got 3 of a kind!")
+    }
+    if(HandTests::test_for_pair(&player_hand) == true) {
+        println!("got a pair!")
+    }
 }
+    

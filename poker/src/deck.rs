@@ -1,7 +1,7 @@
 use rand::{thread_rng, seq::SliceRandom};
 use crate::card::Card;
 
-#[derive(Debug)]
+#[derive(Debug	)]
 pub struct Deck {
     cards: Vec<Card>,
     capacity: usize,
@@ -67,5 +67,9 @@ impl Deck {
 
 	pub fn get_size(&self) -> usize {
         self.cards.len()
-    }
+  }
+
+	pub fn get_cards(&self) -> &Vec<Card> {
+		&self.cards
+	}
 }
