@@ -17,18 +17,18 @@ impl Deck {
 
 	// create a standard 52 card deck
     pub fn fill_standard(&mut self) {
-		for i in 0..52 {
-			let suit = match i / 13 {
-				0 => "Spade",
-				1 => "Heart",
-				2 => "Club",
-				3 => "Diamond",
-				_ => "INVALID",
-			};
-			
-			// add cards with values 2-14 (2-Ace) with each of the 4 suits
-			self.add_card(Card::new(i % 13 + 2, suit));
-		}
+			for i in 0..52 {
+				let suit = match i / 13 {
+					0 => "Spade",
+					1 => "Heart",
+					2 => "Club",
+					3 => "Diamond",
+					_ => "INVALID",
+				};
+				
+				// add cards with values 2-14 (2-Ace) with each of the 4 suits
+				self.add_card(Card::new(i % 13 + 2, suit));
+			}
     }
 
 	// randomize the cards in deck

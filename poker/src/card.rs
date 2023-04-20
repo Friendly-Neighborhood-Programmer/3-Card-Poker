@@ -1,9 +1,15 @@
 #[derive(Debug, Clone)]
+
+//data structure of a card
 pub struct Card {
-    value: i8,    //Aces run high, value 2..14, with Ace = 14
-    suit: String, //Spade, Heart, Club, Diamond
+    //card value is stored as a signed 8-bit integer
+    //values 2-10 represent their respective face cards, with 11 = J, 12 = Q, 13 = K, 14 = A (aces high)
+    value: i8,    
+    //card suit is stored as a string
+    suit: String,
 }
 
+//function implementations of a card
 impl Card {
     pub fn new(val: i8, suit: &str) -> Self {
         let suit = match suit {
