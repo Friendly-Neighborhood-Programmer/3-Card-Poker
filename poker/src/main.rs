@@ -42,21 +42,16 @@ fn test_deck() {
     player_hand.fill_from_deck(&mut deck);
     print!("new player hand: \n{:#?}\n", player_hand);
     print!("new deck size: {}\n", deck.get_size());
-    if HandTests::test_for_straight_flush(&deck) == true {
-        println!("got a straight flush");
-    }
-    if HandTests::test_for_straight(&player_hand) == true {
-        println!("got a straight!");
-    }
-    if HandTests::test_for_flush(&player_hand) == true {
-        println!("got a flush!")
-    }
-    if HandTests::test_for_triple(&player_hand) == true {
-        println!("got 3 of a kind!")
-    }
-    if HandTests::test_for_pair(&player_hand) == true {
-        println!("got a pair!")
-    }   
-    println!("{}", HandTests::test_for_highs(&player_hand));
+    match HandTests::get_deck_points(&player_hand) {
+        8 => println!("Straight flush"),
+        7 => println!("Triple"),
+        6 => println!("Straight"),
+        5 => println!("Flush"),
+        4 => println!("Pair"),
+        3 => println!("Ace high"),
+        2 => println!("King high"),
+        1 => println!("Queen high"),
+        _ => println!("Nothing")
+    }  
 }
     
