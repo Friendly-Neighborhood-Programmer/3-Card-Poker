@@ -33,7 +33,8 @@ pub fn get_hand(deck1: &Deck, deck2: Option<&Deck>) -> HandType {
         }
         None => deck.fill_from_deck(&mut deck1.clone()),
     };
-
+    //TODO: Check if deck length == 6 then run 4 of a kind, royal flush, full house tests
+    //TODO: Write 4 of a kind, royal flush, full house tests.
     if test_for_straight_flush(&deck) {
         return HandType::StraightFlush;
     }
