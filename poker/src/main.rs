@@ -49,8 +49,8 @@ fn test_deck() {
 fn test_hands() {
     let mut player = Deck::new(3);
     player.add_card(Card::new(10, "Spade"));
-    player.add_card(Card::new(12, "Spade"));
-    player.add_card(Card::new(6, "Spade"));
+    player.add_card(Card::new(11, "Spade"));
+    player.add_card(Card::new(12    , "Spade"));
 
     match get_hand(&player, None) {
         HandType::StraightFlush => println!("Straight flush"),
