@@ -600,7 +600,7 @@ impl eframe::App for App {
                     
                         if ui.button("Deal").clicked()
                         {
-                            if self.player.money >= 2 * self.ante && !self.rasied && !self.dealt {
+                            if self.player.money >= 2 * self.ante && !self.raised && !self.dealt {
                             self.dealt = true;
                             self.deal();
                             }
