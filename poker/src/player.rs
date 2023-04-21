@@ -11,7 +11,7 @@ pub struct Player {
 
 //function implementations for a player type
 impl Player {
-     /*
+    /*
     Function: new()
     Purpose: Construtor for the Player class, setting the player's initial amount of money at $100 and creating their hand as a "Deck" struct with capacity 3
     Parameters: N/A

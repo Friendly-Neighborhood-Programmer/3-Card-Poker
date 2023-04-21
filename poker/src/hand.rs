@@ -6,10 +6,10 @@ pub enum HandType {
     Straight,
     Flush,
     Pair,
+    HighAce,
     HighKing,
     HighQueen,
     HighJack,
-    HighAce,
     Other,
 }
 

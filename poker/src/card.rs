@@ -11,6 +11,42 @@ pub struct Card {
     suit: String,
 }
 
+//function implementations of a card
+impl Card {
+    pub fn new(val: i8, suit: &str) -> Self {
+        let suit = match suit {
+            "s" => "Spade",
+            "h" => "Heart",
+            "c" => "Club",
+            "d" => "Diamond",
+            _ => suit,
+        };
+
+        Self {
+            value: val,
+            suit: String::from(suit),
+        }
+    }
+
+    pub fn get_value(&self) -> i8 {
+        self.value
+    }
+
+    pub fn get_suit(&self) -> &str {
+        self.suit.as_str()
+    }
+
+    pub fn get_face(&self) -> String {
+        match self.value {
+            11 => String::from("J"),
+            12 => String::from("Q"),
+            13 => String::from("K"),
+            14 => String::from("A"),
+            _ => self.value.to_string(),
+        }
+    }
+}
+
 impl Sub for Card {
     type Output = i8;
 
@@ -38,41 +74,5 @@ impl PartialOrd for Card {
 impl Ord for Card {
     fn cmp(&self, other: &Self) -> Ordering {
         self.value.cmp(&other.value)
-    }
-}
-
-//function implementations of a card
-impl Card {
-    pub fn new(val: i8, suit: &str) -> Self {
-        let suit = match suit {
-            "s" => "Spade",
-            "h" => "Heart",
-            "c" => "Club",
-            "d" => "Diamond",
-            &_ => suit,
-        };
-
-        Self {
-            value: val,
-            suit: String::from(suit),
-        }
-    }
-
-    pub fn get_value(&self) -> i8 {
-        self.value
-    }
-
-    pub fn get_suit(&self) -> &str {
-        self.suit.as_str()
-    }
-
-    pub fn get_face(&self) -> String {
-        match self.value {
-            11 => String::from("J"),
-            12 => String::from("Q"),
-            13 => String::from("K"),
-            14 => String::from("A"),
-            _ => self.value.to_string(),
-        }
     }
 }

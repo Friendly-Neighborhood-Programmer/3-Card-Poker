@@ -3,14 +3,18 @@ use crate::hand::{
     HandType::{Flush, Pair, Straight, StraightFlush, Triple},
 };
 
-struct Game {
+struct GameManager {
 	deck: Deck,
-	player: Player,
 	dealer: Player,
+	player: Player,
+	ante: usize,
+	play: usize,
 }
 
+//TODO: complete game manager logic: dealer qualify, player play, 
+//      player fold, push bet
 
-impl Game {
+impl GameManager {
 	/*
     Function: ante_bet()
     Purpose: Allows the player to place an ante bet and determines the payoff depending on their hand
@@ -46,5 +50,14 @@ impl Game {
         const FLUSH_PAYOFF: usize = 3;
         
         let hand = get_hand(&self.cards, None);
+
+		match hand {
+            StraightFlush => self.money += amount * STRAIGHT_FLUSH_PAYOFF,
+            Triple => self.money += amount * TRIPLE_PAYOFF,
+            Straight => self.money += amount * STRAIGHT_PAYOFF,
+            Flush => self.money += amount * FLUSH_PAYOFF,
+            Pair => self.money += amount,
+            _ => self.money -= amount,
+        }
 	}
 }
