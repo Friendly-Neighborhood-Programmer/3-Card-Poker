@@ -7,6 +7,7 @@ use crate::{
 use eframe::egui;
 use egui::{vec2, Color32, FontId, Pos2, Response, RichText};
 use egui_extras::RetainedImage;
+use std::cmp::Ordering::{Less, Equal, Greater};
 
 pub fn init_app() -> Result<(), eframe::Error> {
     let options = eframe::NativeOptions {
@@ -345,7 +346,7 @@ impl App {
     }
 
     // start the round and deal the player their cards
-    pub fn deal(&mut self) {
+    pub fn new_cards(&mut self) {
         self.rasied = false;
         self.player.empty();
         self.player.fill_from(&mut self.deck);
@@ -356,10 +357,27 @@ impl App {
         if self.deck.get_size() == 0 {
             self.deck.fill_standard();
             self.deck.shuffle();
+            self.message = format!("Wow you really love this game");
         }
-
+    }
+    pub fn deal(&mut self) {
+        self.rasied = false;
+        self.new_cards();
         self.place_ante();
         self.place_pair_plus();
+        let hand = match get_hand(&self.player.cards, None) {
+            HandType::Other => "less than high card",
+            HandType::HighJack => "a Jack High",
+            HandType::HighQueen => "a Queen High",
+            HandType::HighKing => "a King High",
+            HandType::HighAce => "an Ace High",
+            HandType::Pair => "a Pair",
+            HandType::Flush => "a Flush",
+            HandType::Straight => "a Straight",
+            HandType::Triple => "a Triple",
+            HandType::StraightFlush => "a Straight Flush",
+        };
+        self.message = format!("{}\nYour hand is {}", self.message, hand);
     }
 
     fn place_ante(&mut self) {
@@ -370,20 +388,78 @@ impl App {
         self.player.money -= self.pair_plus;
     }
 
-    pub fn fold(&mut self) {}
+    pub fn fold(&mut self) {
+        self.message = format!("You folded");
+        self.dealt = false;
+    }
 
     pub fn play(&mut self) {
         self.rasied = true;
         self.player.money -= self.ante;
-        self.ante *= 2;
+
+        if !self.check_dealer_qualify() {
+            self.message = format!("The dealer did not qualify, your play wager of ${} has been refunded", self.ante); 
+            self.player.money += self.ante;
+            match get_hand(&self.player.cards, None).cmp(&get_hand(&self.dealer, None)) {
+                Greater => {
+                    self.player.money += self.ante * 2;
+                    self.message = format!("{}\n Your hand ranked higher then the dealers, your Ante wager of ${} has been payed out",self.message, self.ante); 
+                },
+                _ => { 
+                    self.player.money += self.ante;
+                    self.message = format!("{}\n Your hand did not rank higher then the dealers, your Ante wager of ${} has been refunded out",self.message, self.ante); 
+                },
+            }
+        }
+        else{
+            match get_hand(&self.player.cards, None).cmp(&get_hand(&self.dealer, None)) {
+                Greater => {
+                    self.player.money += self.ante * 4;
+                    self.message = format!("You won ${}, Congratulations! :)", self.ante * 2); 
+                },
+                Equal => { 
+                    self.player.money += self.ante * 2;
+                    self.message = format!("You tied with the dealer"); 
+                },
+                Less => {
+                    self.message = format!("You lost ${}, better luck next time :(", self.ante * 2); 
+                },
+            };
+            let pair_winnings = self.check_pair_plus();
+            if pair_winnings > 0 {
+                self.message = format!("{}\n You won ${} in pair plus wager, Congratulations!",self.message, pair_winnings); 
+            }
+            else{
+                self.message = format!("{}\n You lost ${} on your pair plus wager, better luck next time",self.message, self.pair_plus);
+            }
+        }
     }
 
-    pub fn check_dealer_qualify(&mut self) -> bool {
-        match get_hand(&self.dealer, None) {
-            HandType::HighJack => false,
-            HandType::Other => false,
-            _ => true,
+    pub fn check_dealer_qualify(&self) -> bool {
+        get_hand(&self.dealer, None) > HandType::HighJack
+    }
+
+    pub fn check_pair_plus(&mut self) -> usize {
+        const STRAIGHT_FLUSH_PAYOFF: usize = 40;
+        const TRIPLE_PAYOFF: usize = 30;
+        const STRAIGHT_PAYOFF: usize = 6;
+        const FLUSH_PAYOFF: usize = 3;
+
+        let amount = match get_hand(&self.player.cards, None) {
+            HandType::StraightFlush => self.pair_plus * STRAIGHT_FLUSH_PAYOFF,
+            HandType::Triple => self.pair_plus * TRIPLE_PAYOFF,
+            HandType::Straight => self.pair_plus * STRAIGHT_PAYOFF,
+            HandType::Flush => self.pair_plus * FLUSH_PAYOFF,
+            HandType::Pair => self.pair_plus,
+            _ => 0,
+        };
+
+        if amount == 0 {
+            self.player.money -= self.pair_plus;
+        } else {
+            self.player.money += self.pair_plus;
         }
+        amount
     }
 }
 impl eframe::App for App {
@@ -395,13 +471,7 @@ impl eframe::App for App {
                 //think of these ui.horizontal calls as divs, just a way to structure the screen
                 //Divs are as follows: dealers cards, players cards
                 ui.horizontal_top(|ui| {
-                    if self.player.money < 99 {
-                        ui.label("Dealer          ");
-                    } else if self.player.money > 999 {
-                        ui.label("Dealer            ");
-                    } else {
-                        ui.label("Dealer           ");
-                    }
+                    ui.label("Dealer          ");
                     if self.rasied {
                         let dealer_card =
                             &self.card_images[(&self.dealer.get_cards()[0]).get_value_raw()];
@@ -446,7 +516,7 @@ impl eframe::App for App {
                     });
                 });
                 ui.horizontal_top(|ui| {
-                    ui.label(format!("Player | ${}", self.player.money));
+                    ui.label(format!("Player ${} ", self.player.money));
                     if !self.dealt {
                         let player_card = &self.card_back;
                         ui.add(egui::Image::new(
@@ -483,10 +553,13 @@ impl eframe::App for App {
                             player_card.size_vec2() / vec2(2.0, 2.0),
                         ));
                     }
+                    ui.vertical_centered( |ui| {
+                        ui.label(self.message.clone());
+                    });
                 });
                 ui.horizontal_centered(|ui| {
                     ui.horizontal_centered(|ui| {
-                        ui.label(format!("Ante Bet: ${}", self.ante));
+                        ui.label(format!("           Ante Bet: ${}", self.ante));
                         if ui.button("-").clicked() && self.ante > 25 && !self.dealt {
                             self.ante -= 1;
                         }
@@ -496,28 +569,53 @@ impl eframe::App for App {
                     });
                     ui.label("          ");
                     ui.horizontal_centered(|ui| {
-                        if ui.button("Raise").clicked() && !self.rasied {
-                            self.play()
+                        if ui.button("Raise").clicked(){
+                            if !self.rasied && self.dealt {
+                            self.play();
                         }
-                        else if self.rasied {
-                            self.message = format!("Can not raise again"); 
+                            else if self.rasied{
+                                self.message = format!("Can not raise again"); 
+                            }
+                            else if !self.dealt{
+                                self.message = format!("Can not raise before dealing"); 
+                            }
                         }
-                        if ui.button("Fold").clicked() && !self.rasied {
-                            self.fold()
+                        if ui.button("Fold").clicked(){
+                            if self.dealt && !self.rasied {
+                            self.fold();
+                            }
+                            else if self.rasied{
+                                self.message = format!("Can not fold after raising"); 
+                            }
+                            else if !self.dealt{
+                                self.message = format!("Can not fold before dealing"); 
+                            }
                         }
-                        else if self.rasied {
-                            self.message = format!("Can not fold after raising"); 
-                        }
+                    
                         if ui.button("Deal").clicked()
-                            && self.player.money >= 2 * self.ante
-                            && !self.rasied
                         {
+                            if self.player.money >= 2 * self.ante && !self.rasied {
                             self.dealt = true;
                             self.deal();
-                        } else if self.player.money <= 2 * self.ante {
-                            self.message = format!("You do not have enough money to make that bet");
+                            }
+                            else if self.rasied{
+                                self.message = format!("You can not deal after raising, click 'next hand' to start another round");  
+                            }
+                            else {
+                                self.message = format!("You do not have enough money to make that bet");  
+                            }
+                        } 
+                        if ui.button("Next hand").clicked(){
+                            if self.rasied && self.dealt {
+                                self.rasied = false;
+                                self.dealt = false;
+                                self.message = format!("A new round begins...");
+                                self.new_cards();
+                            }
+                            else {
+                                self.message = format!("Can not deal next hand until round is over"); 
+                            }
                         }
-
                     });
                     ui.label("          ");
                     ui.horizontal_centered(|ui| {
@@ -538,88 +636,10 @@ impl eframe::App for App {
                     ui.label(" ");
                     if ui.button("Start Game").clicked() {
                         self.is_game = true;
-                        self.deal();
+                        self.new_cards();
                     }
                 });
             }
         });
     }
 }
-
-//fn gen_card(&mut self, card: &Card, top_left: egui::Pos2, bottom_right: egui::Pos2) -> ImageData {}
-
-struct ImageData {
-    image: String,
-    texture: egui::TextureHandle,
-    suit_color: egui::Color32,
-    rect: egui::Rect,
-    rounding: egui::Rounding,
-    fill_color: egui::Color32,
-    stroke: egui::Stroke,
-}
-
-//Graveyard for storage perposes
-// player_images: Vec::new(),
-// dealer_images: Vec::new(),
-// club_image: RetainedImage::from_image_bytes(
-//     "../images/Club.png",
-//     include_bytes!("../images/Club.png"),
-// )
-// .unwrap(),
-// diamond_image: RetainedImage::from_image_bytes(
-//     "../images/Diamond.png",
-//     include_bytes!("../images/Diamond.png"),
-// )
-// .unwrap(),
-// heart_image: RetainedImage::from_image_bytes(
-//     "../images/Heart.png",
-//     include_bytes!("../images/Heart.png"),
-// )
-// .unwrap(),
-// spade_image: RetainedImage::from_image_bytes(
-//     "../images/Spade.png",
-//     include_bytes!("../images/Spade.png"),
-// )
-// .unwrap(),
-
-//will add stuff like adding the rect and card number
-// suit image load.
-// let mut image = match card.get_suit() {
-//     "Spade" => self.spade_image,
-//     "Club" => self.club_image,
-//     "Diamond" => self.diamond_image,
-//     "Heart" => self.heart_image,
-// };
-
-//rect for the card body
-// let rect = egui::Rect::from_min_max(top_left, bottom_right);
-// let rounding = egui::Rounding::same(5.0);
-// let fill_color = egui::Color32::from_rgb(0, 0, 0);
-// let stroke = egui::Stroke::new(2.0, egui::Color32::from_rgb(0, 0, 0));
-// ui.painter().rect(rect, rounding, fill_color, stroke);
-
-//color for text
-// let suit_color = match card.get_suit() {
-//     "Spade" => egui::Color32::from_rgb(255, 255, 255),
-//     "Club" => egui::Color32::from_rgb(255, 255, 255),
-//     "Diamond" => egui::Color32::from_rgb(255, 0, 0),
-//     "Heart" => egui::Color32::from_rgb(255, 0, 0),
-//     _ => egui::Color32::from_rgb(0, 0, 255), //For error detection and testing ONLY
-// };
-// ui.label(RichText::new(card.get_face()).color(suit_color));
-
-// Show the image:
-//ui.add(egui::Image::new(texture, texture.size_vec2()));
-
-// Shorter version:
-//ui.image(&tex, tex.size_vec2());
-
-// ImageData {
-//     image: (image),
-//     texture: (tex),
-//     suit_color: (suit_color),
-//     rect: (rect),
-//     rounding: (rounding),
-//     fill_color: (fill_color),
-//     stroke: (stroke),
-// }

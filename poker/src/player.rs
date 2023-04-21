@@ -6,7 +6,7 @@ use std::ops::{Add, Sub};
 //cards is a "Deck type"
 pub struct Player {
     pub money: usize,
-    cards: Deck,
+    pub cards: Deck,
 }
 
 //function implementations for a player type
@@ -19,7 +19,7 @@ impl Player {
     */
     pub fn new() -> Self {
         Self {
-            money: 100,
+            money: 1000,
             cards: Deck::new(3),
         }
     }
