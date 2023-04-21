@@ -1,5 +1,6 @@
 use crate::deck::Deck;
-use crate::hand::{HandType::{Flush, Straight, StraightFlush, Triple}, get_hand};
+use crate::hand::HandType;
+use crate::hand::{HandType::{Flush, Straight, StraightFlush, Triple, Pair}, get_hand};
 
 pub struct Player {
     money: usize,
@@ -34,7 +35,7 @@ impl Player {
         const STRAIGHT_PAYOFF: usize = 6;
         const FLUSH_PAYOFF: usize = 3;
         
-        let hand = get_hand(&self.cards, None);
+        let hand:HandType = get_hand(&self.cards, None);
 
         match hand {
             StraightFlush => self.money += amount * STRAIGHT_FLUSH_PAYOFF,
