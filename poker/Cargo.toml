@@ -10,3 +10,5 @@ egui = "0.21.0"
 rand = "0.8.5"
 eframe = "0.21.3"
 env_logger = "0.10"
+egui_extras = {version = "0.21.0", features = ["image"]}
+image = { version = "0.24", default-feature = false, features = ["png"] }

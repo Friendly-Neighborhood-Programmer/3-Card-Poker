@@ -16,7 +16,7 @@ impl Card {
     /*
     Function: new()
     Purpose: Construtor for the Card struct, which sets the card's rank value and suit
-    Parameters: 
+    Parameters:
         val (IN) - the face value of the card (explained above)
         suit (IN) - the suit of the card
     Returns: A new instance of the Card struct with an assigned value and suit
@@ -70,8 +70,18 @@ impl Card {
             _ => self.value.to_string(),
         }
     }
+    pub fn get_value_raw(&self) -> usize {
+        let multi: i8 = match self.suit.as_str() {
+            "Club" => 0,
+            "Diamond" => 1,
+            "Heart" => 2,
+            "Spade" => 3,
+            &_ => 99,
+        };
+        let rtr = self.value - 2 + (multi * 13);
+        rtr as usize
+    }
 }
-
 
 //override the subtract operator for a card so that we can perform arithmetic on card face values
 //used when checking for straights

@@ -1,11 +1,11 @@
+use crate::{card::Card, deck::Deck};
 use std::ops::{Add, Sub};
-use crate::{deck::Deck, card::Card};
 
 //data structure of a player
 //money is an unsigned integer representing the amount of money a player has
 //cards is a "Deck type"
 pub struct Player {
-    money: usize,
+    pub money: usize,
     cards: Deck,
 }
 
@@ -52,8 +52,11 @@ impl Player {
     pub fn fill_from(&mut self, other: &mut Deck) {
         self.cards.fill_from_deck(other);
     }
-}
 
+    pub fn empty(&mut self) {
+        self.cards.empty_deck();
+    }
+}
 
 //overloading the + operator for the Player type
 impl Add<usize> for Player {
