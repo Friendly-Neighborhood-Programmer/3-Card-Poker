@@ -430,7 +430,7 @@ impl App {
                 self.message = format!("{}\n You won ${} in pair plus wager, Congratulations!",self.message, pair_winnings); 
             }
             else{
-                self.message = format!("{}\n You lost ${} on your pair plus wager, better luck next time",self.message, self.pair_plus);
+                self.message = format!("{}\n You lost ${} on your pair plus wager",self.message, self.pair_plus);
             }
         }
     }
@@ -594,12 +594,15 @@ impl eframe::App for App {
                     
                         if ui.button("Deal").clicked()
                         {
-                            if self.player.money >= 2 * self.ante && !self.rasied {
+                            if self.player.money >= 2 * self.ante && !self.rasied && !self.dealt {
                             self.dealt = true;
                             self.deal();
                             }
                             else if self.rasied{
                                 self.message = format!("You can not deal after raising, click 'next hand' to start another round");  
+                            }
+                            else if self.dealt{
+                                self.message = format!("You can not deal after already dealing");  
                             }
                             else {
                                 self.message = format!("You do not have enough money to make that bet");  
