@@ -600,11 +600,7 @@ impl eframe::App for App {
                     
                         if ui.button("Deal").clicked()
                         {
-<<<<<<< HEAD
-                            if self.player.money >= 2 * self.ante && !self.raised {
-=======
                             if self.player.money >= 2 * self.ante && !self.rasied && !self.dealt {
->>>>>>> 4665b1b900eb7f0096b16760e9a14619b8967567
                             self.dealt = true;
                             self.deal();
                             }
@@ -645,7 +641,7 @@ impl eframe::App for App {
                 //if the game is not in play -> main menu
                 ui.vertical_centered(|ui| {
                     ui.label(" ");
-                    ui.label("Welcome to the Casino... That exclusivly plays 3 card poker");
+                    ui.label("Welcome to the Casino... That exclusively plays 3 card poker");
                     ui.label(" ");
                     if ui.button("Start Game").clicked() {
                         self.is_game = true;
