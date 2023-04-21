@@ -23,20 +23,39 @@ impl Player {
             cards: Deck::new(3),
         }
     }
-
+    /*
+    Function: get_money()
+    Purpose: Get the amount of money that the player has
+    Parameters: N/A
+    Returns: usize (unsigned integer) representing the amount of money that the palyer has
+    */
     pub fn get_money(&self) -> usize {
         self.money
     }
 
+    /*
+    Function: get_cards()
+    Purpose: Get the player's card array
+    Parameters: N/A
+    Returns: &Vec<Card> - a reference to the player's card array
+    */
     pub fn get_cards(&self) -> &Vec<Card> {
         self.cards.get_cards()
     }
 
+    /*
+    Function: fill_from_deck()
+    Purpose: Transfer cards from another deck into the player's deck using the Deck::fill_from_deck() function
+    Parameters: other (IN/OUT) -- a reference to a Deck type to transfer cards from
+    Returns: N/A
+    */
     pub fn fill_from(&mut self, other: &mut Deck) {
         self.cards.fill_from_deck(other);
     }
 }
 
+
+//overloading the + operator for the Player type
 impl Add<usize> for Player {
     type Output = Self;
 
@@ -48,6 +67,7 @@ impl Add<usize> for Player {
     }
 }
 
+//overloading the - operator for the Player type
 impl Sub<usize> for Player {
     type Output = Self;
 
