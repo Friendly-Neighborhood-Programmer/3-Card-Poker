@@ -13,6 +13,14 @@ pub struct Card {
 
 //function implementations of a card
 impl Card {
+    /*
+    Function: new()
+    Purpose: Construtor for the Card struct, which sets the card's rank value and suit
+    Parameters: 
+        val (IN) - the face value of the card (explained above)
+        suit (IN) - the suit of the card
+    Returns: A new instance of the Card struct with an assigned value and suit
+    */
     pub fn new(val: i8, suit: &str) -> Self {
         let suit = match suit {
             "s" => "Spade",
@@ -27,15 +35,32 @@ impl Card {
             suit: String::from(suit),
         }
     }
-
+    /*
+    Function: get_value()
+    Purpose: Get the face value of a card
+    Parameters: N/A
+    Returns: i8 (signed 8-bit integer) representing the face value of the card
+    */
     pub fn get_value(&self) -> i8 {
         self.value
     }
 
+    /*
+    Function: get_suit()
+    Purpose: Get the suit of a card
+    Parameters: N/A
+    Returns: String representing the suit of a card
+    */
     pub fn get_suit(&self) -> &str {
         self.suit.as_str()
     }
 
+    /*
+    Function: get_face()
+    Purpose: Get the face value of a card given its rank value
+    Parameters: N/A
+    Returns: String representing the value of a card if it is a face card and a blank string otherwise
+    */
     pub fn get_face(&self) -> String {
         match self.value {
             11 => String::from("J"),
@@ -47,6 +72,9 @@ impl Card {
     }
 }
 
+
+//override the subtract operator for a card so that we can perform arithmetic on card face values
+//used when checking for straights
 impl Sub for Card {
     type Output = i8;
 
@@ -55,6 +83,10 @@ impl Sub for Card {
     }
 }
 
+/*
+    the next four functions are overload the == operator for a Card so that we may check if two cards' face values are equal
+    we use this when checking for triples
+*/
 impl PartialEq for Card {
     fn eq(&self, other: &Self) -> bool {
         self.value == other.value

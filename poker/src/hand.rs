@@ -75,7 +75,8 @@ Returns:
 */
 fn test_for_triple(deck: &Deck) -> bool {
     let cards = deck.get_cards();
-
+    //iterate over all cards in the deck three times and check if all card face values are equal and suits are not equal
+    //this way we know that a hand has 3 of a kind
     for i in 0..deck.get_size() {
         for j in 0..deck.get_size() {
             for k in 0..deck.get_size() {
@@ -105,6 +106,9 @@ Returns:
 fn test_for_straight(deck: &Deck) -> bool {
     let cards = deck.get_cards();
 
+    //iterate over the deck three times and check if the difference between face values is 1
+    //if it is, that means it is a straight sequence (e.g. a sequence of 2,3,4 only has a difference of one between terms)
+    //otherwise return false
     for i in 0..deck.get_size() {
         for j in 0..deck.get_size() {
             for k in 0..deck.get_size() {
@@ -130,6 +134,10 @@ Returns:
 */
 fn test_for_flush(deck: &Deck) -> bool {
     // ordered as (Spade, Heart, Club, Diamond)
+    //create a tuple with counters foreach of the four suits
+    //iterate over every card in the deck
+    //increment the count of each suit that is found in the deck
+    //essentially counting the number of times each suit appears
     let (s, h, c, d) = deck
         .get_cards()
         .iter()
@@ -140,6 +148,8 @@ fn test_for_flush(deck: &Deck) -> bool {
             "Diamond" => (t.0, t.1, t.2, t.3 + 1),
             _ => t,
         });
+    //return true if any of the suits appears 3 or more times
+    //todo: modify for best 5/6 cards - this function only works for 3 at the moment
     vec![s, h, c, d].iter().max().unwrap() >= &3
 }
 
@@ -154,7 +164,9 @@ Returns:
 */
 fn test_for_pair(deck: &Deck) -> bool {
     let cards = deck.get_cards();
-
+    //iterate over the deck twice and check if there is a pair of cards with the same rank and different suit
+    //if so, return true
+    //if not return false
     for i in 0..deck.get_size() {
         for j in 0..deck.get_size() {
             if cards[i] == cards[j] && cards[i].get_suit() != cards[j].get_suit() {
@@ -178,13 +190,19 @@ Returns:
     _ -- if the deck does not contain any of those
 */
 fn test_for_high(deck: &Deck) -> HandType {
+    //find the highest card in the deck
     let high_card = deck.get_cards().iter().max().unwrap();
 
     return match high_card.get_value() {
+        //if the highest card is an 11, return jack high
         11 => HandType::HighJack,
+        //if the highest card is a 12, return queen high
         12 => HandType::HighQueen,
+        //if the highest card is a 13, return king high
         13 => HandType::HighKing,
+        //if the highest card is a 14, return ace high
         14 => HandType::HighAce,
+        //if highest card is none of those, return other
         _ => HandType::Other,
     };
 }
