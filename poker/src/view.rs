@@ -1,6 +1,6 @@
 use crate::card::Card;
 use eframe::egui;
-use egui::{RichText, FontId, Color32};
+use egui::{Color32, FontId, RichText};
 
 pub fn init_app() -> Result<(), eframe::Error> {
     let options = eframe::NativeOptions {

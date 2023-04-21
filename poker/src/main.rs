@@ -23,7 +23,7 @@ fn test_deck() {
 
     // create smaller deck for player hand
     let mut player_hand = Deck::new(3);
-    let top_card = deck.pop_top_card(); 
+    let top_card = deck.pop_top_card();
 
     print!("top card: \n{:#?}\n", top_card);
     print!("top value: {:#?}\n", top_card.get_value());
@@ -50,7 +50,7 @@ fn test_hands() {
     let mut player = Deck::new(3);
     player.add_card(Card::new(10, "Spade"));
     player.add_card(Card::new(11, "Spade"));
-    player.add_card(Card::new(12    , "Spade"));
+    player.add_card(Card::new(12, "Spade"));
 
     match get_hand(&player, None) {
         HandType::StraightFlush => println!("Straight flush"),

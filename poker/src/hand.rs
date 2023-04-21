@@ -68,9 +68,9 @@ fn test_for_triple(deck: &Deck) -> bool {
 fn test_for_straight(deck: &Deck) -> bool {
     let cards = deck.get_cards();
 
-    for i in 0..cards.len() {
-        for j in 0..cards.len() {
-            for k in 0..cards.len() {
+    for i in 0..deck.get_size() {
+        for j in 0..deck.get_size() {
+            for k in 0..deck.get_size() {
                 if (cards[i].get_value() - cards[j].get_value() == 1)
                     && (cards[j].get_value() - cards[k].get_value() == 1)
                 {
@@ -83,8 +83,18 @@ fn test_for_straight(deck: &Deck) -> bool {
 }
 
 fn test_for_flush(deck: &Deck) -> bool {
-    deck.get_size() == 3 && 
-    std::collections::BTreeSet::from_iter(deck.get_cards().iter()).len() == 1
+    // ordered as (Spade, Heart, Club, Diamond)
+    let (s, h, c, d) = deck
+        .get_cards()
+        .iter()
+        .fold((0, 0, 0, 0), |t, c| match c.get_suit() {
+            "Spade" => (t.0 + 1, t.1, t.2, t.3),
+            "Heart" => (t.0, t.1 + 1, t.2, t.3),
+            "Club" => (t.0, t.1, t.2 + 1, t.3),
+            "Diamond" => (t.0, t.1, t.2, t.3 + 1),
+            _ => t,
+        });
+    vec![s, h, c, d].iter().max().unwrap() >= &3
 }
 
 fn test_for_pair(deck: &Deck) -> bool {
@@ -92,8 +102,7 @@ fn test_for_pair(deck: &Deck) -> bool {
 
     for i in 0..deck.get_size() {
         for j in 0..deck.get_size() {
-            if cards[i] == cards[j] 
-            && cards[i].get_suit() != cards[j].get_suit() {
+            if cards[i] == cards[j] && cards[i].get_suit() != cards[j].get_suit() {
                 return true;
             }
         }
