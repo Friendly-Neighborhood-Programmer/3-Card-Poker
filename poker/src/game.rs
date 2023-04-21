@@ -9,6 +9,8 @@ use egui::{vec2, Color32, FontId, Pos2, Response, RichText};
 use egui_extras::RetainedImage;
 use std::cmp::Ordering::{Less, Equal, Greater};
 
+
+//initializes the app, sets up view
 pub fn init_app() -> Result<(), eframe::Error> {
     let options = eframe::NativeOptions {
         initial_window_size: Some(egui::vec2(1280.0, 720.0)),
@@ -34,13 +36,15 @@ struct App {
     card_back: RetainedImage,
     //states
     is_game: bool,
-    rasied: bool,
+    raised: bool,
     dealt: bool,
     //message to user
     message: String,
 }
 
+
 impl App {
+    //maps images to card values
     fn new(cc: &eframe::CreationContext<'_>) -> Self {
         // Customize egui here with cc.egui_ctx.set_fonts and cc.egui_ctx.set_visuals.
         // Restore app state using cc.storage (requires the "persistence" feature).
@@ -339,7 +343,7 @@ impl App {
             )
             .unwrap(),
             is_game: false,
-            rasied: false,
+            raised: false,
             dealt: false,
             message: String::from("Good luck!"),
         }
@@ -347,7 +351,7 @@ impl App {
 
     // start the round and deal the player their cards
     pub fn new_cards(&mut self) {
-        self.rasied = false;
+        self.raised = false;
         self.player.empty();
         self.player.fill_from(&mut self.deck);
         self.dealer.empty_deck();
@@ -360,8 +364,10 @@ impl App {
             self.message = format!("Wow you really love this game");
         }
     }
+
+    //deal cards
     pub fn deal(&mut self) {
-        self.rasied = false;
+        self.raised = false;
         self.new_cards();
         self.place_ante();
         self.place_pair_plus();
@@ -394,7 +400,7 @@ impl App {
     }
 
     pub fn play(&mut self) {
-        self.rasied = true;
+        self.raised = true;
         self.player.money -= self.ante;
 
         if !self.check_dealer_qualify() {
@@ -472,7 +478,7 @@ impl eframe::App for App {
                 //Divs are as follows: dealers cards, players cards
                 ui.horizontal_top(|ui| {
                     ui.label("Dealer          ");
-                    if self.rasied {
+                    if self.raised {
                         let dealer_card =
                             &self.card_images[(&self.dealer.get_cards()[0]).get_value_raw()];
                         ui.add(egui::Image::new(
@@ -570,10 +576,10 @@ impl eframe::App for App {
                     ui.label("          ");
                     ui.horizontal_centered(|ui| {
                         if ui.button("Raise").clicked(){
-                            if !self.rasied && self.dealt {
+                            if !self.raised && self.dealt {
                             self.play();
                         }
-                            else if self.rasied{
+                            else if self.raised{
                                 self.message = format!("Can not raise again"); 
                             }
                             else if !self.dealt{
@@ -581,10 +587,10 @@ impl eframe::App for App {
                             }
                         }
                         if ui.button("Fold").clicked(){
-                            if self.dealt && !self.rasied {
+                            if self.dealt && !self.raised {
                             self.fold();
                             }
-                            else if self.rasied{
+                            else if self.raised{
                                 self.message = format!("Can not fold after raising"); 
                             }
                             else if !self.dealt{
@@ -594,11 +600,11 @@ impl eframe::App for App {
                     
                         if ui.button("Deal").clicked()
                         {
-                            if self.player.money >= 2 * self.ante && !self.rasied {
+                            if self.player.money >= 2 * self.ante && !self.raised {
                             self.dealt = true;
                             self.deal();
                             }
-                            else if self.rasied{
+                            else if self.raised{
                                 self.message = format!("You can not deal after raising, click 'next hand' to start another round");  
                             }
                             else {
@@ -606,8 +612,8 @@ impl eframe::App for App {
                             }
                         } 
                         if ui.button("Next hand").clicked(){
-                            if self.rasied && self.dealt {
-                                self.rasied = false;
+                            if self.raised && self.dealt {
+                                self.raised = false;
                                 self.dealt = false;
                                 self.message = format!("A new round begins...");
                                 self.new_cards();

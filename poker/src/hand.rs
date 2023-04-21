@@ -110,7 +110,6 @@ fn test_for_straight(deck: &Deck) -> bool {
     //iterate over the deck three times and check if the difference between face values is 1
     //if it is, that means it is a straight sequence (e.g. a sequence of 2,3,4 only has a difference of one between terms)
     //otherwise return false
-    //TODO: Add check for A,2,3 straight!!
     for i in 0..deck.get_size() {
         for j in 0..deck.get_size() {
             for k in 0..deck.get_size() {
@@ -151,7 +150,6 @@ fn test_for_flush(deck: &Deck) -> bool {
             _ => t,
         });
     //return true if any of the suits appears 3 or more times
-    //todo: modify for best 5/6 cards - this function only works for 3 at the moment
     vec![s, h, c, d].iter().max().unwrap() >= &3
 }
 
