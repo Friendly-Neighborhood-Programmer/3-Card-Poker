@@ -24,7 +24,7 @@ impl Player {
             StraightFlush => self.money += amount * STRAIGHT_FLUSH_PAYOFF,
             Triple => self.money += amount * TRIPLE_PAYOFF,
             Straight => self.money += amount,
-            _ => (),
+            _ => self.money -= amount
         }
     }
 
@@ -41,7 +41,8 @@ impl Player {
             Triple => self.money += amount * TRIPLE_PAYOFF,
             Straight => self.money += amount * STRAIGHT_PAYOFF,
             Flush => self.money += amount * FLUSH_PAYOFF,
-            _ => (),
+            Pair => self.money += amount,
+            _ => self.money -= amount,
         }
     }
 }

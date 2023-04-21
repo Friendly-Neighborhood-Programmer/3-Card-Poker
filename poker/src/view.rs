@@ -14,7 +14,7 @@ pub fn init_app() -> Result<(), eframe::Error> {
 
 #[derive(Default)]
 struct App {
-    timesCliked: u32,
+    times_clicked: u32,
 }
 impl App {
     fn new(cc: &eframe::CreationContext<'_>) -> Self {
@@ -28,9 +28,9 @@ impl App {
 impl eframe::App for App {
     fn update(&mut self, ctx: &egui::Context, frame: &mut eframe::Frame) {
         egui::CentralPanel::default().show(ctx, |ui| {
-            ui.heading(format!("Kill me {} times", self.timesCliked));
+            ui.heading(format!("Kill me {} times", self.times_clicked));
             if ui.button("click me").clicked() {
-                self.timesCliked += 1;
+                self.times_clicked += 1;
             }
             
         });

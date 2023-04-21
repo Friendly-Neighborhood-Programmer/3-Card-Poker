@@ -24,7 +24,7 @@ fn test_deck() {
 
     // create smaller deck for player hand
     let mut player_hand = Deck::new(3);
-    let top_card = deck.pop_top_card();
+    let top_card = deck.pop_top_card(); 
 
     print!("top card: \n{:#?}\n", top_card);
     print!("top value: {:#?}\n", top_card.get_value());
