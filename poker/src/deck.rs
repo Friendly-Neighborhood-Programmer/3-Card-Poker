@@ -1,7 +1,7 @@
-use rand::{thread_rng, seq::SliceRandom};
 use crate::card::Card;
+use rand::{seq::SliceRandom, thread_rng};
 
-#[derive(Debug	)]
+#[derive(Debug, Clone)]
 pub struct Deck {
     cards: Vec<Card>,
     capacity: usize,
@@ -15,61 +15,63 @@ impl Deck {
         }
     }
 
-	// create a standard 52 card deck
+    // create a standard 52 card deck
     pub fn fill_standard(&mut self) {
-			for i in 0..52 {
-				let suit = match i / 13 {
-					0 => "Spade",
-					1 => "Heart",
-					2 => "Club",
-					3 => "Diamond",
-					_ => "INVALID",
-				};
-				
-				// add cards with values 2-14 (2-Ace) with each of the 4 suits
-				self.add_card(Card::new(i % 13 + 2, suit));
-			}
+        for i in 0..52 {
+            let suit = match i / 13 {
+                0 => "Spade",
+                1 => "Heart",
+                2 => "Club",
+                3 => "Diamond",
+                _ => "INVALID",
+            };
+
+            // add cards with values 2-14 (2-Ace) with each of the 4 suits
+            self.add_card(Card::new(i % 13 + 2, suit));
+        }
     }
 
-	// randomize the cards in deck
-	pub fn shuffle(&mut self) {
-		self.cards.shuffle(&mut thread_rng());
-	}
+    // randomize the cards in deck
+    pub fn shuffle(&mut self) {
+        self.cards.shuffle(&mut thread_rng());
+    }
 
-	// remove and return the top card
-	pub fn pop_top_card(&mut self) -> Card {
-		self.cards.pop().unwrap()
-	}
-	
-	// remove and return the top card
-	pub fn add_card(&mut self, card: Card) -> bool {
-		if self.get_size() >= self.get_capacity() { return false; } 
+    // remove and return the top card
+    pub fn pop_top_card(&mut self) -> Card {
+        self.cards.pop().unwrap()
+    }
 
-		self.cards.push(card);
-		return true;
-	}
+    // remove and return the top card
+    pub fn add_card(&mut self, card: Card) -> bool {
+        if self.get_size() >= self.get_capacity() {
+            return false;
+        }
 
-	// pull cards from other into calling deck
-	pub fn fill_from_deck(&mut self, other: &mut Deck) {
-		while self.cards.len() < self.capacity {
-			self.add_card(other.pop_top_card());
-		}
-	}
+        self.cards.push(card);
+        return true;
+    }
 
-	// pull cards from other into calling deck
-	pub fn empty_deck(&mut self) {
-		self.cards.clear();
-	}
+    // pull cards from other into calling deck
+    pub fn fill_from_deck(&mut self, other: &mut Self) {
+        while self.cards.len() < self.capacity {
+            self.add_card(other.pop_top_card());
+        }
+    }
 
-	pub fn get_capacity(&self) -> usize {
-		self.capacity
-	}
+    // pull cards from other into calling deck
+    pub fn empty_deck(&mut self) {
+        self.cards.clear();
+    }
 
-	pub fn get_size(&self) -> usize {
+    pub fn get_capacity(&self) -> usize {
+        self.capacity
+    }
+
+    pub fn get_size(&self) -> usize {
         self.cards.len()
-  }
+    }
 
-	pub fn get_cards(&self) -> &Vec<Card> {
-		&self.cards
-	}
+    pub fn get_cards(&self) -> &Vec<Card> {
+        &self.cards
+    }
 }

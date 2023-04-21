@@ -1,69 +1,47 @@
 use crate::deck::Deck;
-use crate::handtests::HandTests;
+use crate::hand::{HandType::{Flush, Straight, StraightFlush, Triple}, get_hand};
 
 pub struct Player {
-  money: i8,
-  cards: Deck
+    money: usize,
+    cards: Deck,
 }
 
 impl Player {
-  pub fn new() -> Self {
-    Self {
-      money: 0,
-      cards: Deck::new(3)
-    }
-  }
-
-  pub fn ante_bet(&mut self, amount:i8) {
-    const STRAIGHT_FLUSH_PAYOFF:i8 = 5;
-    const TRIPLE_PAYOFF:i8 = 4;
-    let straight_flush = HandTests::test_for_straight_flush(&self.cards);
-    let triple = HandTests::test_for_triple(&self.cards);
-    let straight = HandTests::test_for_straight(&self.cards);
-
-    if straight_flush {
-      self.money += amount * STRAIGHT_FLUSH_PAYOFF;
-    }
-    else if triple {
-      self.money += amount * TRIPLE_PAYOFF;
-    }
-    else if straight {
-      self.money += amount;
-    }
-    else {
-      self.money += 0;
+    pub fn new() -> Self {
+        Self {
+            money: 0,
+            cards: Deck::new(3),
+        }
     }
 
-  }
+    pub fn ante_bet(&mut self, amount: usize) {
+        const STRAIGHT_FLUSH_PAYOFF: usize = 5;
+        const TRIPLE_PAYOFF: usize = 4;
 
-  pub fn pair_plus_bet(&mut self, amount:i8) {
-    const STRAIGHT_FLUSH_PAYOFF:i8 = 5;
-    const TRIPLE_PAYOFF:i8 = 30;
-    const STRAIGHT_PAYOFF:i8 = 6;
-    const FLUSH_PAYOFF:i8 = 3;
-    let straight_flush = HandTests::test_for_straight_flush(&self.cards);
-    let triple = HandTests::test_for_triple(&self.cards);
-    let straight = HandTests::test_for_straight(&self.cards);
-    let flush = HandTests::test_for_flush(&self.cards);
-    let pair = HandTests::test_for_pair(&self.cards);
+        let hand = get_hand(&self.cards, None);
+        
+        match hand {
+            StraightFlush => self.money += amount * STRAIGHT_FLUSH_PAYOFF,
+            Triple => self.money += amount * TRIPLE_PAYOFF,
+            Straight => self.money += amount,
+            _ => (),
+        }
+    }
 
-    if straight_flush {
-      self.money += amount * STRAIGHT_FLUSH_PAYOFF;
+    pub fn pair_plus_bet(&mut self, amount: usize) {
+        const STRAIGHT_FLUSH_PAYOFF: usize = 40;
+        const TRIPLE_PAYOFF: usize = 30;
+        const STRAIGHT_PAYOFF: usize = 6;
+        const FLUSH_PAYOFF: usize = 3;
+        
+        let hand = get_hand(&self.cards, None);
+
+        match hand {
+            StraightFlush => self.money += amount * STRAIGHT_FLUSH_PAYOFF,
+            Triple => self.money += amount * TRIPLE_PAYOFF,
+            Straight => self.money += amount * STRAIGHT_PAYOFF,
+            Flush => self.money += amount * FLUSH_PAYOFF,
+            _ => (),
+        }
     }
-    else if triple {
-      self.money += amount * TRIPLE_PAYOFF;
-    }
-    else if straight {
-      self.money += amount * STRAIGHT_PAYOFF;
-    }
-    else if flush {
-      self.money += amount * FLUSH_PAYOFF;
-    }
-    else if pair {
-      self.money += amount;
-    }
-    else {
-      return;
-    }
-  }
 }
