@@ -53,7 +53,7 @@ impl Deck {
 
     // pull cards from other into calling deck
     pub fn fill_from_deck(&mut self, other: &mut Self) {
-        while self.cards.len() < self.capacity {
+        while self.cards.len() < self.capacity && other.cards.len() > 0 {
             self.add_card(other.pop_top_card());
         }
     }

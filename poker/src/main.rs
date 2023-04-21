@@ -1,7 +1,6 @@
 use crate::hand::{get_hand, HandType};
 use card::Card;
 use deck::Deck;
-use eframe::egui;
 mod card;
 mod deck;
 mod hand;
@@ -12,7 +11,7 @@ fn main() {
     view::init_app().unwrap();
 }
 
-//////////////////////////////////////////////////////////////////////////////// 
+////////////////////////////////////////////////////////////////////////////////
 #[test]
 fn test_deck() {
     // create main deck, fill and shuffle
@@ -49,9 +48,9 @@ fn test_deck() {
 #[test]
 fn test_hands() {
     let mut player = Deck::new(3);
-    player.add_card(Card::new(11, "Spade"));
-    player.add_card(Card::new(11, "Club"));
-    player.add_card(Card::new(12, "Heart"));
+    player.add_card(Card::new(10, "Spade"));
+    player.add_card(Card::new(12, "Spade"));
+    player.add_card(Card::new(6, "Spade"));
 
     match get_hand(&player, None) {
         HandType::StraightFlush => println!("Straight flush"),
