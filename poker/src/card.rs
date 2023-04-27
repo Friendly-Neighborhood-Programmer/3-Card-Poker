@@ -1,6 +1,6 @@
 use std::{cmp::Ordering, ops::Sub};
 
-#[derive(Debug, Clone, Hash)]
+#[derive(Debug, Clone)]
 //data structure of a card
 pub struct Card {
     //card value is stored as a signed 8-bit integer
@@ -55,21 +55,6 @@ impl Card {
         self.suit.as_str()
     }
 
-    /*
-    Function: get_face()
-    Purpose: Get the face value of a card given its rank value
-    Parameters: N/A
-    Returns: String representing the value of a card if it is a face card and a blank string otherwise
-    */
-    pub fn get_face(&self) -> String {
-        match self.value {
-            11 => String::from("J"),
-            12 => String::from("Q"),
-            13 => String::from("K"),
-            14 => String::from("A"),
-            _ => self.value.to_string(),
-        }
-    }
     pub fn get_value_raw(&self) -> usize {
         let multi: i8 = match self.suit.as_str() {
             "Club" => 0,

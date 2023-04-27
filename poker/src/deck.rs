@@ -68,16 +68,6 @@ impl Deck {
     }
 
     /*
-    Function: peek_top_card()
-    Purpose: returns the top card on the deck without removing (i.e. the card at array index n - 1)
-    Parameters: N/A
-    Returns: A "Card" struct that was at the top of the deck
-    */
-    pub fn peek_top_card(&mut self) -> &Card {
-        self.cards.last().unwrap()
-    }
-
-    /*
     Function: add_card()
     Purpose: Adds a new card to the top of the deck (i.e. the card at array index n - 1)
     Parameters:
@@ -92,7 +82,7 @@ impl Deck {
         }
 
         self.cards.push(card);
-        return true;
+        true
     }
 
     /*
@@ -102,7 +92,7 @@ impl Deck {
     Returns: N/A
     */
     pub fn fill_from_deck(&mut self, other: &mut Self) {
-        while self.cards.len() < self.capacity && other.cards.len() > 0 {
+        while self.cards.len() < self.capacity && !other.cards.is_empty() {
             self.add_card(other.pop_top_card());
         }
     }

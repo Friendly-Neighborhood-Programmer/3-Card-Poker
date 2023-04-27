@@ -193,7 +193,7 @@ fn test_for_high(deck: &Deck) -> HandType {
     //find the highest card in the deck
     let high_card = deck.get_cards().iter().max().unwrap();
 
-    return match high_card.get_value() {
+    match high_card.get_value() {
         //if the highest card is an 11, return jack high
         11 => HandType::HighJack,
         //if the highest card is a 12, return queen high
@@ -204,5 +204,5 @@ fn test_for_high(deck: &Deck) -> HandType {
         14 => HandType::HighAce,
         //if highest card is none of those, return other
         _ => HandType::Other,
-    };
+    }
 }

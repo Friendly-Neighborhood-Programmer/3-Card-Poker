@@ -1,5 +1,4 @@
 use crate::{card::Card, deck::Deck};
-use std::ops::{Add, Sub};
 
 //data structure of a player
 //money is an unsigned integer representing the amount of money a player has
@@ -22,15 +21,6 @@ impl Player {
             money: 1000,
             cards: Deck::new(3),
         }
-    }
-    /*
-    Function: get_money()
-    Purpose: Get the amount of money that the player has
-    Parameters: N/A
-    Returns: usize (unsigned integer) representing the amount of money that the palyer has
-    */
-    pub fn get_money(&self) -> usize {
-        self.money
     }
 
     /*
@@ -55,29 +45,5 @@ impl Player {
 
     pub fn empty(&mut self) {
         self.cards.empty_deck();
-    }
-}
-
-//overloading the + operator for the Player type
-impl Add<usize> for Player {
-    type Output = Self;
-
-    fn add(self, rhs: usize) -> Self::Output {
-        Self {
-            money: self.money + rhs,
-            cards: self.cards,
-        }
-    }
-}
-
-//overloading the - operator for the Player type
-impl Sub<usize> for Player {
-    type Output = Self;
-
-    fn sub(self, rhs: usize) -> Self::Output {
-        Self {
-            money: self.money - rhs,
-            cards: self.cards,
-        }
     }
 }
