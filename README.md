@@ -1,2 +1,5 @@
 # 3 Card Poker
-Simple 3 card poker simulator for MATH3808
+
+A simple 3 Card Poker simulator developed in Rust.
+
+Makes strong use of Rust's type system and enums, and uses egui for a pretty GUI.
