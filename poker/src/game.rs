@@ -64,7 +64,7 @@ impl App {
             let path = format!(
                 "./images/cards/{}_{}.png",
                 match_suit(card_number / 13), // the suit
-                card_number % 13 + 2 // the card's value
+                card_number % 13 + 2          // the card's value
             );
 
             let mut buffer = vec![];
@@ -72,7 +72,7 @@ impl App {
                 .expect("could not find card image file")
                 .read_to_end(&mut buffer)
                 .expect("problem while reading image");
-            
+
             let img = RetainedImage::from_image_bytes(path, &buffer[..]).unwrap();
             card_vec.push(img);
         }
@@ -217,15 +217,15 @@ impl App {
             _ => 0,
         };
 
-        if amount == 0 {
-            self.player.money -= self.pair_plus;
-        } else {
-            self.player.money += self.pair_plus;
+        if amount != 0 {
+            self.player.money += self.pair_plus * 2;
         }
         amount
     }
 }
 
+// TODO: revamp GUI visuals and feel
+// will add a better layout
 impl eframe::App for App {
     fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
         egui::CentralPanel::default().show(ctx, |ui| {
@@ -236,42 +236,25 @@ impl eframe::App for App {
                 //Divs are as follows: dealers cards, players cards
                 ui.horizontal_top(|ui| {
                     ui.label("Dealer          ");
-                    if self.raised {
-                        let dealer_card =
-                            &self.card_images[(self.dealer.get_cards()[0]).get_value_raw()];
-                        ui.add(egui::Image::new(
-                            dealer_card.texture_id(ctx),
-                            dealer_card.size_vec2() / vec2(2.0, 2.0),
-                        ));
-                        let dealer_card =
-                            &self.card_images[(self.dealer.get_cards()[1]).get_value_raw()];
-                        ui.add(egui::Image::new(
-                            dealer_card.texture_id(ctx),
-                            dealer_card.size_vec2() / vec2(2.0, 2.0),
-                        ));
-                        let dealer_card =
-                            &self.card_images[(self.dealer.get_cards()[2]).get_value_raw()];
-                        ui.add(egui::Image::new(
-                            dealer_card.texture_id(ctx),
-                            dealer_card.size_vec2() / vec2(2.0, 2.0),
-                        ));
+                    if self.raised { //TODO: change to match for raised state later
+                        for i in 0..3 {
+                            let dealer_card =
+                                &self.card_images[(self.dealer.get_cards()[i]).get_value_raw()];
+                            ui.add(egui::Image::new(
+                                dealer_card.texture_id(ctx),
+                                dealer_card.size_vec2() / vec2(2.0, 2.0),
+                            ));
+                        }
                     } else {
                         let dealer_card = &self.card_back;
-                        ui.add(egui::Image::new(
-                            dealer_card.texture_id(ctx),
-                            dealer_card.size_vec2() / vec2(2.0, 2.0),
-                        ));
-                        let dealer_card = &self.card_back;
-                        ui.add(egui::Image::new(
-                            dealer_card.texture_id(ctx),
-                            dealer_card.size_vec2() / vec2(2.0, 2.0),
-                        ));
-                        let dealer_card = &self.card_back;
-                        ui.add(egui::Image::new(
-                            dealer_card.texture_id(ctx),
-                            dealer_card.size_vec2() / vec2(2.0, 2.0),
-                        ));
+                        for _ in 0..3 {
+                            ui.add(egui::Image::new(
+                                dealer_card.texture_id(ctx),
+                                dealer_card.size_vec2() / vec2(2.0, 2.0),
+                            ));
+                        }
                     }
+
                     ui.vertical_centered( |ui| {
                         ui.label("STRATEGY");
                         ui.label("
@@ -281,41 +264,23 @@ impl eframe::App for App {
                 });
                 ui.horizontal_top(|ui| {
                     ui.label(format!("Player ${} ", self.player.money));
-                    if !self.dealt {
-                        let player_card = &self.card_back;
-                        ui.add(egui::Image::new(
-                            player_card.texture_id(ctx),
-                            player_card.size_vec2() / vec2(2.0, 2.0),
-                        ));
-                        let player_card = &self.card_back;
-                        ui.add(egui::Image::new(
-                            player_card.texture_id(ctx),
-                            player_card.size_vec2() / vec2(2.0, 2.0),
-                        ));
-                        let player_card = &self.card_back;
-                        ui.add(egui::Image::new(
-                            player_card.texture_id(ctx),
-                            player_card.size_vec2() / vec2(2.0, 2.0),
-                        ));
+                    if self.dealt { //TODO: change to match for dealt state
+                        for i in 0..3 {
+                            let player_card =
+                                &self.card_images[(self.player.get_cards()[i]).get_value_raw()];
+                            ui.add(egui::Image::new(
+                                player_card.texture_id(ctx),
+                                player_card.size_vec2() / vec2(2.0, 2.0),
+                            ));
+                        }
                     } else {
-                        let player_card =
-                            &self.card_images[(self.player.get_cards()[0]).get_value_raw()];
-                        ui.add(egui::Image::new(
-                            player_card.texture_id(ctx),
-                            player_card.size_vec2() / vec2(2.0, 2.0),
-                        ));
-                        let player_card =
-                            &self.card_images[(self.player.get_cards()[1]).get_value_raw()];
-                        ui.add(egui::Image::new(
-                            player_card.texture_id(ctx),
-                            player_card.size_vec2() / vec2(2.0, 2.0),
-                        ));
-                        let player_card =
-                            &self.card_images[(self.player.get_cards()[2]).get_value_raw()];
-                        ui.add(egui::Image::new(
-                            player_card.texture_id(ctx),
-                            player_card.size_vec2() / vec2(2.0, 2.0),
-                        ));
+                        let player_card = &self.card_back;
+                        for _ in 0..3 {
+                            ui.add(egui::Image::new(
+                                player_card.texture_id(ctx),
+                                player_card.size_vec2() / vec2(2.0, 2.0),
+                            ));
+                        }
                     }
                     ui.vertical_centered( |ui| {
                         ui.label(self.message.clone());
